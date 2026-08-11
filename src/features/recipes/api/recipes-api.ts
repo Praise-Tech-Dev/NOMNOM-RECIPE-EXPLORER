@@ -56,8 +56,15 @@ export const getRecipes = async (
   return data;
 };
 
-export const getRecipe = async (id: number) => {
-  const data = await apiClient<Recipe>(`recipes/${id}`);
+export const getRecipe = async (id: number, signal?: AbortSignal) => {
+  console.log("GETTING RECIPE:", id);
+
+  const data = await apiClient<Recipe>(
+    `recipes/${id}`, 
+    signal
+  );
+  console.log("RECIPE ID:", id);
+  console.log("RECIPE DATA:", data);
   return data;
 
 }

@@ -1,5 +1,5 @@
 // import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import RecipeCard from "../features/recipes/components/recipe-card";
 import { useRecipes } from "../features/recipes/queries/use-recipes";
 import { ErrorState } from "../shared/components/error-state";
@@ -34,7 +34,7 @@ export default function RecipePage() {
 
     const {
       data: tags,
-      isPending: isTagsPending,
+      // isPending: isTagsPending,
     } = useRecipeTags();
 
     // console.log("TAGS:", tags);
@@ -173,7 +173,7 @@ export default function RecipePage() {
             if (event.target.value) {
               params.set("mealType", event.target.value);
               params.delete("q");
-              params.delete("tag")
+              params.delete("tag");
               setSearchInput("");
             } else {
               params.delete("mealType");
@@ -205,7 +205,9 @@ export default function RecipePage() {
 
       <div className="flex flex-wrap gap-8">
         {data.recipes.map((recipe) => (
-          <RecipeCard key={recipe.id} recipe={recipe} />
+          <Link to={`/recipes/${recipe.id}`}>
+            <RecipeCard key={recipe.id} recipe={recipe} />
+          </Link>
         ))}
       </div>
 

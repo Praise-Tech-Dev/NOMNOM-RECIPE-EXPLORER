@@ -13,10 +13,10 @@ export const recipesOptions = (
   });
 };
 
-export const recipeDetailsOptions = (id: number) => {
+export const recipeDetailOptions = (id: number) => {
   return queryOptions({
     queryKey: recipeKeys.detail(id),
-    queryFn: () => getRecipe(id),
+    queryFn: ({signal}) => getRecipe(id, signal),
   });
 };
 
