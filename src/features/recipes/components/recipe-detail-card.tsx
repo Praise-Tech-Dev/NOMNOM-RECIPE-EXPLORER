@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Recipe } from "../types/recipe.types";
 import { Card } from "./Card";
 type RecipeDetailsCardProps = {
@@ -5,10 +6,19 @@ type RecipeDetailsCardProps = {
 };
 
 export default function RecipeDetailsCard({recipe}: RecipeDetailsCardProps) {
+    const [checkedIngredients, setCheckedIngredients] = useState<string[]>([]);
+
+    const handleCheckboxChange = (ingredient: string) => {
+        setCheckedIngredients((prevCheckedIngredients) =>
+          prevCheckedIngredients.includes(ingredient)
+            ? prevCheckedIngredients.filter((item) => item !== ingredient)
+            : [...prevCheckedIngredients, ingredient],
+        );
+    }
   return (
     <Card>
-      <div className="">
-        <div className="w-70 overflow-hidden">
+      <div className="flex">
+        <div className="w-[40%] overflow-hidden aspect-square">
           <img
             src={recipe.image}
             alt={recipe.name}
@@ -18,8 +28,47 @@ export default function RecipeDetailsCard({recipe}: RecipeDetailsCardProps) {
         <div className="p-4">
           <div>{recipe.name}</div>
           <div>
-            <strong>Ingredients :</strong> {recipe.ingredients.map((ingredient) => (
-                <div key={ingredient}>{ingredient}</div>
+            <strong>Ingredients :</strong>{" "}
+            {recipe.ingredients.map((ingredient) => (
+              <div key={ingredient}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={checkedIngredients.includes(ingredient)}
+                    onChange={() => handleCheckboxChange(ingredient)}
+                  />
+                </label>
+                {ingredient}
+              </div>
+            ))}
+            <p>
+              <strong>Selected: </strong>
+              {checkedIngredients.join(", ") || "None"}
+            </p>
+          </div>
+          <ul className="list-disc pl-5">
+            {recipe.instructions.map((instruction) => (
+              <li key={instruction}>{instruction}</li>
+            ))}
+          </ul>
+          <div className="">
+            <strong>Tags: </strong>
+            <div className="flex flex-wrap gap-2">
+              {recipe.tags.map((tag) => (
+                <div
+                  key={tag}
+                  className="px-2 py-1 bg-amber-700/60 font-semibold rounded-lg"
+                >
+                  {tag}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <strong>Meal Type:</strong>
+
+            {recipe.mealType.map((meal) => (
+              <span key={meal}>{meal}</span>
             ))}
           </div>
           <div>

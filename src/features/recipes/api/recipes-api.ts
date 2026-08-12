@@ -74,7 +74,7 @@ export const getRecipeTags = async () => {
   return data;
 }
 
-export const getRecipeMealtype = async () => {
-  const data = await apiClient<string[]>("recipes/meal-type");
-  return data;
-}
+// export const getRecipeMealtype = async () => {
+//   const data = await apiClient<string[]>("recipes/meal-type");
+//   return data;
+// }

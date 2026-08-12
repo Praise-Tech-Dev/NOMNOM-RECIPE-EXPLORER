@@ -3,6 +3,7 @@ import { useRecipe } from "../features/recipes/queries/use-recipe"
 import { LoadingIndicator } from "../shared/components/loading-indicator";
 import { ErrorState } from "../shared/components/error-state";
 import RecipeDetailsCard from "../features/recipes/components/recipe-detail-card";
+import RelatedRecipes from "../features/recipes/components/related-recipes";
 
 export default function RecipeDetailPage() {
   const {id} = useParams();
@@ -22,7 +23,7 @@ export default function RecipeDetailPage() {
       <h2>Receipe Detail Page</h2>
       <p>Recipe Id: {recipeId}</p>
       <RecipeDetailsCard key={recipeId} recipe={data} />
-
+      <RelatedRecipes recipe={data}/>
     </div>
   )
 }

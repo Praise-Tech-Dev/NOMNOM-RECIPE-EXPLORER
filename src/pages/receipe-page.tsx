@@ -7,46 +7,54 @@ import { LoadingIndicator } from "../shared/components/loading-indicator";
 import { useState } from "react";
 import type { SortField, SortOrder } from "../features/recipes/types/recipe-list-params";
 import { useRecipeTags } from "../features/recipes/queries/use-recipe-tags";
+import { useQueryClient } from "@tanstack/react-query";
+import { recipeDetailOptions } from "../features/recipes/queries/recipe-options";
+import RecipeLink from "../features/recipes/components/recipe-link";
 
 export default function RecipePage() {
-    // const [page, setPage] = useState(1);
-    const [searchParams, setSearchParams] = useSearchParams();
-    const [searchInput, setSearchInput] = useState(
-      searchParams.get("q") || ""
-    );
-    const page = parseInt(searchParams.get("page") || "1");
-    const q = searchParams.get("q") || "";
-    const sortBy = searchParams.get("sortBy") as SortField || undefined;
-    const order = searchParams.get("order") as SortOrder|| undefined;
-    const tag = searchParams.get("tag") || "";
-    const mealType = searchParams.get("mealType") || "";
-     // Assuming a total of 100 recipes and 6 recipes per page
-    const pageSize = 6;
-    const { data, isPending, isError, isPlaceholderData, isFetching } = useRecipes({
-        page,
-        pageSize,
-        q,
-        tag,
-        sortBy,
-        order,
-        mealType,
-    });
+  const queryClient = useQueryClient();
 
-    const {
-      data: tags,
-      // isPending: isTagsPending,
-    } = useRecipeTags();
+  const prefetchRecipe = (recipeId: number) => {
+    queryClient.prefetchQuery(recipeDetailOptions(recipeId));
+  };
+  // const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchInput, setSearchInput] = useState(
+    searchParams.get("q") || ""
+  );
+  const page = parseInt(searchParams.get("page") || "1");
+  const q = searchParams.get("q") || "";
+  const sortBy = searchParams.get("sortBy") as SortField || undefined;
+  const order = searchParams.get("order") as SortOrder|| undefined;
+  const tag = searchParams.get("tag") || "";
+  const mealType = searchParams.get("mealType") || "";
+    // Assuming a total of 100 recipes and 6 recipes per page
+  const pageSize = 6;
+  const { data, isPending, isError, isPlaceholderData, isFetching } = useRecipes({
+      page,
+      pageSize,
+      q,
+      tag,
+      sortBy,
+      order,
+      mealType,
+  });
 
-    // console.log("TAGS:", tags);
-    // console.log("IS ARRAY:", Array.isArray(tags));
+  const {
+    data: tags,
+    // isPending: isTagsPending,
+  } = useRecipeTags();
 
-    if (isPending) return <LoadingIndicator />;
-    
-    if (isError) return <ErrorState message="Unable to load recipes page." />;
+  // console.log("TAGS:", tags);
+  // console.log("IS ARRAY:", Array.isArray(tags));
 
-    const { total} = data;
-    
-    const totalPages = Math.ceil(total / pageSize);
+  if (isPending) return <LoadingIndicator />;
+  
+  if (isError) return <ErrorState message="Unable to load recipes page." />;
+
+  const { total} = data;
+  
+  const totalPages = Math.ceil(total / pageSize);
 
 
 
@@ -205,9 +213,13 @@ export default function RecipePage() {
 
       <div className="flex flex-wrap gap-8">
         {data.recipes.map((recipe) => (
-          <Link to={`/recipes/${recipe.id}`}>
-            <RecipeCard key={recipe.id} recipe={recipe} />
-          </Link>
+          <RecipeLink
+            key={recipe.id}
+            recipeId={recipe.id}
+            to={`/recipes/${recipe.id}`}
+          >
+            <RecipeCard recipe={recipe} />
+          </RecipeLink>
         ))}
       </div>
 

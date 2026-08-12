@@ -16,7 +16,8 @@ export const recipesOptions = (
 export const recipeDetailOptions = (id: number) => {
   return queryOptions({
     queryKey: recipeKeys.detail(id),
-    queryFn: ({signal}) => getRecipe(id, signal),
+    queryFn: ({ signal }) => getRecipe(id, signal),
+    staleTime: 5* 60 * 1000,
   });
 };
 
