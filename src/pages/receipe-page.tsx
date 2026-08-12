@@ -1,5 +1,5 @@
 // import { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import RecipeCard from "../features/recipes/components/recipe-card";
 import { useRecipes } from "../features/recipes/queries/use-recipes";
 import { ErrorState } from "../shared/components/error-state";
@@ -7,16 +7,11 @@ import { LoadingIndicator } from "../shared/components/loading-indicator";
 import { useState } from "react";
 import type { SortField, SortOrder } from "../features/recipes/types/recipe-list-params";
 import { useRecipeTags } from "../features/recipes/queries/use-recipe-tags";
-import { useQueryClient } from "@tanstack/react-query";
-import { recipeDetailOptions } from "../features/recipes/queries/recipe-options";
+
 import RecipeLink from "../features/recipes/components/recipe-link";
 
 export default function RecipePage() {
-  const queryClient = useQueryClient();
-
-  const prefetchRecipe = (recipeId: number) => {
-    queryClient.prefetchQuery(recipeDetailOptions(recipeId));
-  };
+  
   // const [page, setPage] = useState(1);
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchInput, setSearchInput] = useState(
