@@ -1,9 +1,10 @@
+import { useSelector } from "@tanstack/react-store";
 import { ErrorState } from "../../../shared/components/error-state";
 import { LoadingIndicator } from "../../../shared/components/loading-indicator";
 import { useRecipes } from "../queries/use-recipes";
 import type { Recipe } from "../types/recipe.types";
 import RecipeCard from "./recipe-card";
-import RecipeLink from "./recipe-link";
+import { recipeStore } from "../store/recipe-ui-store";
 
 
 type RelatedRecipesProps ={
@@ -19,38 +20,28 @@ export default function RelatedRecipes({recipe}: RelatedRecipesProps) {
         tag: tag ?? "",
     },
     Boolean(tag),
-);
-    if (!tag) return <p>No related recipes found.</p>
+  );
+  const recipeView = useSelector(recipeStore, (state) => state.recipeView);
 
-    if (isPending === true) return <LoadingIndicator />
-    if (isError === true) return <ErrorState message="Unable to load related recipes." />;
-    const relatedRecipes = data?.recipes.filter(
-        (relatedRecipe) => relatedRecipe.id !== recipe.id
-    )
+  if (!tag) return <p>No related recipes found.</p>
 
-    if (!relatedRecipes?.length) {
-      return <p>No related recipes found.</p>;
-    }
+  if (isPending === true) return <LoadingIndicator />
+  if (isError === true) return <ErrorState message="Unable to load related recipes." />;
+  const relatedRecipes = data?.recipes.filter(
+      (relatedRecipe) => relatedRecipe.id !== recipe.id
+  )
+
+  if (!relatedRecipes?.length) {
+    return <p>No related recipes found.</p>;
+  }
     
   return (
     <div>
       <h2>Related Recipes</h2>
       <div className="flex flex-wrap gap-4">
         {relatedRecipes?.map((recipe) => (
-          //   <div key={recipe.id}>
-          //     <div className="w-50">
-          //       <img src={recipe.image} alt={recipe.name} />
-          //     </div>
-          //     {recipe.name}
-          //   </div>
-
-            <RecipeLink
-                key={recipe.id} 
-                recipeId={recipe.id} 
-                to={`/recipes/${recipe.id}`}
-            >
-            <RecipeCard recipe={recipe} />
-            </RecipeLink>
+          
+          <RecipeCard recipe={recipe} variant={recipeView} />
         ))}
       </div>
     </div>

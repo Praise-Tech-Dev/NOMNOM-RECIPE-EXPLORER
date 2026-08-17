@@ -51,8 +51,8 @@ export const getRecipes = async (
     `${endpoint}?${searchParams.toString()}`,
     signal
   );
-  console.log("RECIPE PARAMS:", params);
-  console.log("RECIPE ENDPOINT:", endpoint);
+  // console.log("RECIPE PARAMS:", params);
+  // console.log("RECIPE ENDPOINT:", endpoint);
   return data;
 };
 

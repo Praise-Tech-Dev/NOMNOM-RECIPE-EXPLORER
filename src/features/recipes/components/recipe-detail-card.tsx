@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { Recipe } from "../types/recipe.types";
 import { Card } from "./Card";
+import { recipeStore, toggleSavedRecipe } from "../store/recipe-ui-store";
+import { useSelector } from "@tanstack/react-store";
 type RecipeDetailsCardProps = {
   recipe: Recipe;
 };
@@ -15,6 +17,11 @@ export default function RecipeDetailsCard({recipe}: RecipeDetailsCardProps) {
             : [...prevCheckedIngredients, ingredient],
         );
     }
+
+    const isSaved = useSelector(
+      recipeStore,
+      (state) => state.savedRecipeIds.includes(recipe.id)
+    )
   return (
     <Card>
       <div className="flex">
@@ -74,6 +81,13 @@ export default function RecipeDetailsCard({recipe}: RecipeDetailsCardProps) {
           <div>
             <strong>Difficulty:</strong> {recipe.difficulty},{" "}
           </div>
+          <button
+            type="button"
+            className="bg-black text-white px-4 py-2 rounded-lg"
+            onClick={() => toggleSavedRecipe(recipe.id)}
+          >
+            {isSaved ? "Unsave" : "Save"}
+          </button>
         </div>
       </div>
     </Card>

@@ -5,27 +5,30 @@ import { useRecipes } from "../features/recipes/queries/use-recipes";
 import { ErrorState } from "../shared/components/error-state";
 import { LoadingIndicator } from "../shared/components/loading-indicator";
 import { useState } from "react";
-import type { SortField, SortOrder } from "../features/recipes/types/recipe-list-params";
+import type {
+  SortField,
+  SortOrder,
+} from "../features/recipes/types/recipe-list-params";
 import { useRecipeTags } from "../features/recipes/queries/use-recipe-tags";
-
-import RecipeLink from "../features/recipes/components/recipe-link";
+import RecentlyViewedRecipes from "../features/recipes/components/recently-viewed-recipes";
+import { useSelector } from "@tanstack/react-store";
+import { recipeStore, toggleRecipeView } from "../features/recipes/store/recipe-ui-store";
+import { Grid2X2, List } from "lucide-react";
 
 export default function RecipePage() {
-  
   // const [page, setPage] = useState(1);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [searchInput, setSearchInput] = useState(
-    searchParams.get("q") || ""
-  );
+  const [searchInput, setSearchInput] = useState(searchParams.get("q") || "");
   const page = parseInt(searchParams.get("page") || "1");
   const q = searchParams.get("q") || "";
-  const sortBy = searchParams.get("sortBy") as SortField || undefined;
-  const order = searchParams.get("order") as SortOrder|| undefined;
+  const sortBy = (searchParams.get("sortBy") as SortField) || undefined;
+  const order = (searchParams.get("order") as SortOrder) || undefined;
   const tag = searchParams.get("tag") || "";
   const mealType = searchParams.get("mealType") || "";
-    // Assuming a total of 100 recipes and 6 recipes per page
+  // Assuming a total of 100 recipes and 6 recipes per page
   const pageSize = 6;
-  const { data, isPending, isError, isPlaceholderData, isFetching } = useRecipes({
+  const { data, isPending, isError, isPlaceholderData, isFetching } =
+    useRecipes({
       page,
       pageSize,
       q,
@@ -33,30 +36,30 @@ export default function RecipePage() {
       sortBy,
       order,
       mealType,
-  });
+    });
 
   const {
     data: tags,
     // isPending: isTagsPending,
   } = useRecipeTags();
 
+  const recipeView = useSelector(recipeStore, (state) => state.recipeView);
+
   // console.log("TAGS:", tags);
   // console.log("IS ARRAY:", Array.isArray(tags));
 
   if (isPending) return <LoadingIndicator />;
-  
+
   if (isError) return <ErrorState message="Unable to load recipes page." />;
 
-  const { total} = data;
-  
+  const { total } = data;
+
   const totalPages = Math.ceil(total / pageSize);
 
-
+  
 
   return (
     <section>
-      <h2>Recipe Page</h2>
-
       <form
         className="my-4 flex flex-col space-y-4"
         onSubmit={(event) => {
@@ -168,31 +171,49 @@ export default function RecipePage() {
             })}
           </select>
         </div>
-        <select
-          value={mealType}
-          onChange={(event) => {
-            const params = new URLSearchParams(searchParams);
+        <div className="space-x-4">
+          <select
+            value={mealType}
+            onChange={(event) => {
+              const params = new URLSearchParams(searchParams);
 
-            if (event.target.value) {
-              params.set("mealType", event.target.value);
-              params.delete("q");
-              params.delete("tag");
-              setSearchInput("");
-            } else {
-              params.delete("mealType");
-            }
-            params.set("page", "1");
-            setSearchParams(params);
-          }}
-          className="border rounded-lg px-4 py-2 w-1/2"
-        >
-          <option value="">Meal Type</option>
-          <option value="Breakfast">Breakfast</option>
-          <option value="Lunch">Lunch</option>
-          <option value="Dinner">Dinner</option>
-          <option value="Snack">Snack</option>
-          <option value="Dessert">Dessert</option>
-        </select>
+              if (event.target.value) {
+                params.set("mealType", event.target.value);
+                params.delete("q");
+                params.delete("tag");
+                setSearchInput("");
+              } else {
+                params.delete("mealType");
+              }
+              params.set("page", "1");
+              setSearchParams(params);
+            }}
+            className="border rounded-lg px-4 py-2 w-1/2"
+          >
+            <option value="">Meal Type</option>
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch">Lunch</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Snack">Snack</option>
+            <option value="Dessert">Dessert</option>
+          </select>
+          <button
+            onClick={toggleRecipeView}
+            className="border text-black px-4 py-2 rounded-lg"
+          >
+            {recipeView === "grid" ? (
+              <div className="flex gap-2">
+                <List size={18} />
+                Switch to Compact
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <Grid2X2 size={18} />
+                Switch to Grid
+              </div>
+            )}
+          </button>
+        </div>
 
         <button
           type="button"
@@ -206,15 +227,12 @@ export default function RecipePage() {
         </button>
       </form>
 
+      <RecentlyViewedRecipes />
+      <h2 className="text-lg font-bold">All recipes</h2>
+
       <div className="flex flex-wrap gap-8">
         {data.recipes.map((recipe) => (
-          <RecipeLink
-            key={recipe.id}
-            recipeId={recipe.id}
-            to={`/recipes/${recipe.id}`}
-          >
-            <RecipeCard recipe={recipe} />
-          </RecipeLink>
+          <RecipeCard key={recipe.id} recipe={recipe} variant={recipeView} />
         ))}
       </div>
 

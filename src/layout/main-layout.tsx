@@ -1,13 +1,18 @@
-// function MainLayout() {
-//   return (
-//     <>
-//       <Navbar />
+import { Outlet } from "react-router-dom";
 
-//       <main>
-//         <Outlet />
-//       </main>
+import Header from "../shared/components/header";
+import SavedRecipeDrawer from "../features/recipes/components/saved-recipe-drawer";
 
-//       <Footer />
-//     </>
-//   );
-// }
+export default function MainLayout() {
+  return (
+    <>
+      <Header />
+
+      <main className="pt-16 ">
+        <Outlet />
+      </main>
+        
+      <SavedRecipeDrawer />
+    </>
+  );
+}
