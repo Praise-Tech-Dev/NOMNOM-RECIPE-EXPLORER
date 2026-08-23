@@ -25,8 +25,9 @@ export default function RecentlyViewedRecipes() {
 
   const recipeView = useSelector(recipeStore, (state) => state.recipeView); 
   
-  if (recentlyViewedRecipes.length === 0)
-    return <EmptyState message="No recently viewed recipes." />;
+  if (recentlyViewedRecipes.length === 0) {
+    return null;
+  }
   if (isLoading) return <LoadingIndicator />;
   if (hasError) return <ErrorState />;
 
@@ -36,7 +37,13 @@ export default function RecentlyViewedRecipes() {
     <div className="space-y-4 my-10">
       <h2 className="text-lg font-bold">Recently Viewed</h2>
       <div className="border-b w-1/2"></div>
-      <div className="flex flex-wrap gap-4">
+      <div
+        className={
+          recipeView === "grid"
+            ? "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+            : "grid grid-cols-1 gap-4"
+        }
+      >
         {recipes.map((recipe) => (
           <RecipeCard key={recipe.id} recipe={recipe} variant={recipeView} />
         ))}

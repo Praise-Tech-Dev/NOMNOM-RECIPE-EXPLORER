@@ -17,10 +17,10 @@ export function QuickMeal() {
   if (isError) return <ErrorState message="Unable to load recipes." />;
 
   return (
-    <section>
+    <section className="max-w-7xl mx-auto">
       <h2>Quick Meals</h2>
 
-      <div className="flex flex-wrap gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {data.recipes.map((recipe) => (
           <RecipeCard key={recipe.id} recipe={recipe} variant={recipeView} />
         ))}

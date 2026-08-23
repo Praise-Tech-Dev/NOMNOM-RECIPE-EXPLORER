@@ -85,7 +85,7 @@ export const addRecentlyViewedRecipe = (id: number) => {
       id,
       ...state.recentlyViewedRecipeIds
         .filter((recipeId) => recipeId !== id)
-        .slice(0, 4),
+        .slice(0, 3),
     ];
 
     return {
