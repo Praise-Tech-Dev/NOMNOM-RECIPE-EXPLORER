@@ -3,7 +3,6 @@ import { useRecentlyViewedRecipes } from "../queries/use-recently-viewed-recipes
 
 import RecipeCard from "./recipe-card";
 import { useSelector } from "@tanstack/react-store";
-import { EmptyState } from "../../../shared/components/empty-state";
 import { LoadingIndicator } from "../../../shared/components/loading-indicator";
 import { ErrorState } from "../../../shared/components/error-state";
 
