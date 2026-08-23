@@ -1,34 +1,24 @@
-
-
-
 import type { RecipeListResponse } from "../types/recipe-list.types";
 import type { Recipe } from "../types/recipe.types";
 import { apiClient } from "../../../shared/api/api-client";
 import type { RecipeListParams } from "../types/recipe-list-params";
+import type { AddRecipeInput } from "../types/add-recipe-input";
 
 export const getRecipes = async (
   params: RecipeListParams,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ) => {
-  const { 
-    page, 
-    pageSize,
-    q,
-    tag,
-    mealType,
-    sortBy,
-    order,
-  } = params;
+  const { page, pageSize, q, tag, mealType, sortBy, order } = params;
   const skip = (page - 1) * pageSize;
 
   let endpoint = "recipes";
 
   if (q) {
-    endpoint = `recipes/search`
+    endpoint = `recipes/search`;
   } else if (tag) {
-    endpoint = `recipes/tag/${encodeURIComponent(tag)}`
+    endpoint = `recipes/tag/${encodeURIComponent(tag)}`;
   } else if (mealType) {
-    endpoint = `recipes/meal-type/${encodeURIComponent(mealType)}`
+    endpoint = `recipes/meal-type/${encodeURIComponent(mealType)}`;
   }
 
   const searchParams = new URLSearchParams();
@@ -45,11 +35,10 @@ export const getRecipes = async (
   if (order) {
     searchParams.set("order", order);
   }
-  
-  
+
   const data = await apiClient<RecipeListResponse>(
     `${endpoint}?${searchParams.toString()}`,
-    signal
+    { signal },
   );
   // console.log("RECIPE PARAMS:", params);
   // console.log("RECIPE ENDPOINT:", endpoint);
@@ -59,22 +48,24 @@ export const getRecipes = async (
 export const getRecipe = async (id: number, signal?: AbortSignal) => {
   console.log("GETTING RECIPE:", id);
 
-  const data = await apiClient<Recipe>(
-    `recipes/${id}`, 
-    signal
-  );
+  const data = await apiClient<Recipe>(`recipes/${id}`, { signal });
   console.log("RECIPE ID:", id);
   console.log("RECIPE DATA:", data);
   return data;
-
-}
+};
 
 export const getRecipeTags = async () => {
   const data = await apiClient<string[]>("recipes/tags");
   return data;
-}
+};
 
-// export const getRecipeMealtype = async () => {
-//   const data = await apiClient<string[]>("recipes/meal-type");
-//   return data;
-// }
+export const addRecipe = async (input: AddRecipeInput): Promise<Recipe> => {
+  const data = await apiClient<Recipe>(`recipes/add`, 
+    { 
+      method:"POST", 
+      body: JSON.stringify(input),
+    }
+  );
+  
+  return data;
+};

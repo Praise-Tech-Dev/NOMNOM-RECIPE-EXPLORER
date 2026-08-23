@@ -32,7 +32,7 @@ export default function RecipeCard({recipe, variant}: RecipeCardProps) {
             />
           </div>
           <div className="p-4">
-            <div>{recipe.name}</div>
+            <div className="text-lg font-semibold ">{recipe.name}</div>
             <div>
               <strong>Cuisine:</strong> {recipe.cuisine},
             </div>

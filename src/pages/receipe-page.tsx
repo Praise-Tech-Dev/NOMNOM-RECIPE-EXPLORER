@@ -14,6 +14,8 @@ import RecentlyViewedRecipes from "../features/recipes/components/recently-viewe
 import { useSelector } from "@tanstack/react-store";
 import { recipeStore, toggleRecipeView } from "../features/recipes/store/recipe-ui-store";
 import { Grid2X2, List } from "lucide-react";
+import AddRecipeModal from "../features/add-recipe/components/add-recipe-modal";
+import { useAddRecipe } from "../features/add-recipe/mutations/use-add-recipe";
 
 export default function RecipePage() {
   // const [page, setPage] = useState(1);
@@ -27,16 +29,9 @@ export default function RecipePage() {
   const mealType = searchParams.get("mealType") || "";
   // Assuming a total of 100 recipes and 6 recipes per page
   const pageSize = 6;
+  const params = { page, pageSize, q, tag, sortBy, order, mealType };
   const { data, isPending, isError, isPlaceholderData, isFetching } =
-    useRecipes({
-      page,
-      pageSize,
-      q,
-      tag,
-      sortBy,
-      order,
-      mealType,
-    });
+    useRecipes(params);
 
   const {
     data: tags,
@@ -44,6 +39,10 @@ export default function RecipePage() {
   } = useRecipeTags();
 
   const recipeView = useSelector(recipeStore, (state) => state.recipeView);
+
+  const [isAddRecipeModalOpen, setIsAddRecipeModalOpen] = useState(false);
+
+  const addRecipeMutation = useAddRecipe(params);
 
   // console.log("TAGS:", tags);
   // console.log("IS ARRAY:", Array.isArray(tags));
@@ -59,7 +58,7 @@ export default function RecipePage() {
   
 
   return (
-    <section>
+    <section className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex flex-col gap-4 md:gap-6 lg:gap-8">
       <form
         className="my-4 flex flex-col space-y-4"
         onSubmit={(event) => {
@@ -217,6 +216,14 @@ export default function RecipePage() {
 
         <button
           type="button"
+          onClick={() => setIsAddRecipeModalOpen(true)}
+          className="rounded-lg w-fit bg-black px-4 py-2 text-white"
+        >
+          Add Recipe
+        </button>
+
+        <button
+          type="button"
           onClick={() => {
             setSearchParams({});
             setSearchInput("");
@@ -226,6 +233,11 @@ export default function RecipePage() {
           Clear filters
         </button>
       </form>
+      <AddRecipeModal
+        isOpen={isAddRecipeModalOpen}
+        onClose={() => setIsAddRecipeModalOpen(false)}
+        addRecipeMutation={addRecipeMutation}
+      />
 
       <RecentlyViewedRecipes />
       <h2 className="text-lg font-bold">All recipes</h2>

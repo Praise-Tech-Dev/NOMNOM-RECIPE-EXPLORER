@@ -5,7 +5,7 @@ import SavedRecipeDrawer from "../features/recipes/components/saved-recipe-drawe
 
 export default function MainLayout() {
   return (
-    <>
+    <div className="mx-auto px-4 md:px-8">
       <Header />
 
       <main className="pt-16 ">
@@ -13,6 +13,6 @@ export default function MainLayout() {
       </main>
         
       <SavedRecipeDrawer />
-    </>
+    </div>
   );
 }

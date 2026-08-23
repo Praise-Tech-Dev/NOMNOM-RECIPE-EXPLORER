@@ -32,13 +32,13 @@ export default function RelatedRecipes({recipe}: RelatedRecipesProps) {
   )
 
   if (!relatedRecipes?.length) {
-    return <p>No related recipes found.</p>;
+    return null
   }
     
   return (
-    <div>
-      <h2>Related Recipes</h2>
-      <div className="flex flex-wrap gap-4">
+    <div className="space-y-2">
+      <h2 className="text-lg md:text-2xl font-semibold">Related Recipes</h2>
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
         {relatedRecipes?.map((recipe) => (
           
           <RecipeCard recipe={recipe} variant={recipeView} />

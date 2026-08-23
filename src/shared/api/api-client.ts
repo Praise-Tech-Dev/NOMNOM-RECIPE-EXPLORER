@@ -2,12 +2,24 @@ import { ApiError } from "./api-error";
 
 const BASE_URL = "https://dummyjson.com/";
 
+type ApiClientOptions = {
+  method?: "GET" | "POST" | "PUT" | "DELETE";
+  body?: BodyInit;
+  signal?: AbortSignal;
+};
+
 export async function apiClient<T>(
   endpoint: string,
-  signal?: AbortSignal,
+  // signal?: AbortSignal,
+  options?: ApiClientOptions,
 ): Promise<T> {
   const response = await fetch(`${BASE_URL}${endpoint}`, {
-    signal,
+    signal: options?.signal,
+    method: options?.method ?? "GET",
+    body: options?.body,
+    headers: {
+      "Content-Type": "application/json",
+    }
   });
 
   if (!response.ok) {

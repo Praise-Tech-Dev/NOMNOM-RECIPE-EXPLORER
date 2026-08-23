@@ -28,12 +28,9 @@ export default function RecipeDetailPage() {
   if (isError === true) return <ErrorState message="Unable to load recipe details page." />;
   // console.log(data)
   return (
-    <div>
-      <h2>Receipe Detail Page</h2>
-      <p>Recipe Id: {recipeId}</p>
+    <main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8 flex flex-col gap-4 md:gap-6 lg:gap-8">
       <RecipeDetailsCard key={recipeId} recipe={data} />
-      <RelatedRecipes recipe={data}/>
-      
-    </div>
-  )
+      <RelatedRecipes recipe={data} />
+    </main>
+  );
 }
