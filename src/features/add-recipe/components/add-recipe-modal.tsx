@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import type { AddRecipeInput } from "../../recipes/types/add-recipe-input";
 import { X } from "lucide-react";
 import type { UseMutationResult } from "@tanstack/react-query";
@@ -17,6 +17,7 @@ type AddRecipeModalProps = {
     AddRecipeMutationContext
   >;
 };
+
 
 export default function AddRecipeModal({
   isOpen,
@@ -40,39 +41,69 @@ export default function AddRecipeModal({
 
   if (!isOpen) return null;
 
-  return (
-    <div className="bg-gray-200 p-8 rounded-lg ">
-      <form
-        className="flex flex-col gap-2 justify-center items-center"
-        onSubmit={(event) => {
-          event.preventDefault();
-          console.log("FORM SUBMITTED");
+  // file updater for simple inputs (name, cuisine, difficulty, prepTime, cookTime, servings, image url)
+  const handleFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const {name, value, type} = event.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "number" ? Number(value): value,
+    }));
+  };
 
-          addRecipeMutation.mutate(formData, {
-            onSuccess: () => {
-              onClose();
-            },
-          });
-        }}
+  const handleIngredientChange = (value:string , index:number) => {
+    setFormData((prev) => ({
+      ...prev,
+      ingredients: formData.ingredients.map((ingredient, ingredientIndex) =>
+        ingredientIndex === index ? value : ingredient),
+    }));
+  };
+
+  const addIngredient = () => {
+    setFormData((prev) => ({
+      ...prev,
+      ingredients: [...formData.ingredients, ""],
+    }));
+  };
+
+  const removeIngredient = (indexToRemove: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      ingredients: formData.ingredients.filter(
+        (_, ingredientIndex) => ingredientIndex !== indexToRemove,
+      ),
+    }));
+  };
+  
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    console.log("FORM SUBMITTED");
+
+    addRecipeMutation.mutate(formData, {
+      onSuccess: () => {
+        onClose();
+      },
+    });
+  };
+  return (
+    <div className="flex fixed inset-0 items-center justify-center backdrop-blur-sm  p-4 z-50 bg-slate-900/50">
+      <form
+        className={`bg-white flex flex-col gap-2 justify-center items-center max-h-full w-full sm:max-w-md md:max-w-xl lg:max-w-2xl rounded-xl py-4`}
+        onSubmit={handleSubmit}
       >
         <h2 className="font-bold text-lg mb-4">Add Recipe</h2>
 
         <div className="">
           Name:{" "}
           <input
+            name="name"
             value={formData.name}
-            onChange={(event) => {
-              setFormData({
-                ...formData,
-                name: event.target.value,
-              });
-            }}
+            onChange={handleFieldChange}
             className="border rounded-lg px-4 py-1"
           />
         </div>
         <div className="">
           Cuisine{" "}
-          <input
+          {/* <input
             className="border rounded-lg px-4 py-1"
             value={formData.cuisine}
             onChange={(event) => {
@@ -81,6 +112,12 @@ export default function AddRecipeModal({
                 cuisine: event.target.value,
               });
             }}
+          /> */}
+          <input
+            className="border rounded-lg px-4 py-1"
+            name="cuisine"
+            value={formData.cuisine}
+            onChange={handleFieldChange}
           />
         </div>
         <div className="">
@@ -88,12 +125,8 @@ export default function AddRecipeModal({
           <input
             className="border rounded-lg px-4 py-1"
             value={formData.difficulty}
-            onChange={(event) => {
-              setFormData({
-                ...formData,
-                difficulty: event.target.value,
-              });
-            }}
+            name="difficulty"
+            onChange={handleFieldChange}
           />
         </div>
         <div className="">
@@ -101,13 +134,9 @@ export default function AddRecipeModal({
           <input
             className="border rounded-lg px-4 py-1"
             type="number"
+            name="prepTimeMinutes"
             value={formData.prepTimeMinutes}
-            onChange={(event) => {
-              setFormData({
-                ...formData,
-                prepTimeMinutes: Number(event.target.value),
-              });
-            }}
+            onChange={handleFieldChange}
           />
         </div>
         <div className=""></div>
@@ -115,14 +144,10 @@ export default function AddRecipeModal({
           Cook Time{" "}
           <input
             className="border rounded-lg px-4 py-1"
+            name="cookTimeMinutes"
             type="number"
             value={formData.cookTimeMinutes}
-            onChange={(event) => {
-              setFormData({
-                ...formData,
-                cookTimeMinutes: Number(event.target.value),
-              });
-            }}
+            onChange={handleFieldChange}
           />
         </div>
         <div className="">
@@ -130,13 +155,10 @@ export default function AddRecipeModal({
           <input
             className="border rounded-lg px-4 py-1"
             type="number"
+            name="servings"
+            min={1}
             value={formData.servings}
-            onChange={(event) => {
-              setFormData({
-                ...formData,
-                servings: Number(event.target.value),
-              });
-            }}
+            onChange={handleFieldChange}
           />
         </div>
         <div className="">
@@ -144,13 +166,9 @@ export default function AddRecipeModal({
           <input
             className="border rounded-lg px-4 py-1"
             type="url"
+            name="image"
             value={formData.image}
-            onChange={(event) => {
-              setFormData({
-                ...formData,
-                image: event.target.value,
-              });
-            }}
+            onChange={handleFieldChange}
           />
         </div>
         <div>
@@ -163,29 +181,12 @@ export default function AddRecipeModal({
                   className="border rounded-lg px-4 py-2 flex-1"
                   value={ingredient}
                   placeholder={`Ingredient ${index + 1}`}
-                  onChange={(event) => {
-                    setFormData({
-                      ...formData,
-                      ingredients: formData.ingredients.map(
-                        (ingredient, ingredientIndex) =>
-                          ingredientIndex === index
-                            ? event.target.value
-                            : ingredient,
-                      ),
-                    });
-                  }}
+                  onChange={(event) => handleIngredientChange(event.target.value, index)}
                 />
 
                 <button
                   type="button"
-                  onClick={() => {
-                    setFormData({
-                      ...formData,
-                      ingredients: formData.ingredients.filter(
-                        (_, ingredientIndex) => ingredientIndex !== index,
-                      ),
-                    });
-                  }}
+                  onClick={() => removeIngredient(index)}
                   className="bg-gray-700 text-white border rounded-lg px-3 py-2"
                 >
                   Remove
@@ -196,12 +197,7 @@ export default function AddRecipeModal({
 
           <button
             type="button"
-            onClick={() => {
-              setFormData({
-                ...formData,
-                ingredients: [...formData.ingredients, ""],
-              });
-            }}
+            onClick={addIngredient}
             className="bg-black text-white mt-2 border rounded-lg px-4 py-2"
           >
             + Add ingredient
@@ -225,19 +221,7 @@ export default function AddRecipeModal({
           </button>
         </div>
 
-        {/* <button 
-            type="button"
-            onClick={() => {
-                setFormData({
-                  ...formData,
-                  ingredients: formData.ingredients.filter(
-                    (_, ingredientIndex) => ingredientIndex !== index
-                  ),
-                });
-            }}
-        >
-            Remove
-        </button> */}
+        
       </form>
     </div>
   );

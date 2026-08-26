@@ -33,7 +33,7 @@ export default function RecentlyViewedRecipes() {
   
 
   return (
-    <div className="space-y-4 my-10">
+    <div className="space-y-4">
       <h2 className="text-lg font-bold">Recently Viewed</h2>
       <div className="border-b w-1/2"></div>
       <div
