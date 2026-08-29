@@ -1,6 +1,6 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import type { AddRecipeInput } from "../../recipes/types/add-recipe-input";
-import { X } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 import type { UseMutationResult } from "@tanstack/react-query";
 import type { Recipe } from "../../recipes/types/recipe.types";
 import type { AddRecipeMutationContext } from "../mutations/use-add-recipe";
@@ -24,6 +24,19 @@ export default function AddRecipeModal({
   onClose,
   addRecipeMutation,
 }: AddRecipeModalProps) {
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [isOpen]);
+
   // const addRecipeMutation = useAddRecipe();
   const [formData, setFormData] = useState<AddRecipeInput>({
     name: "",
@@ -40,6 +53,8 @@ export default function AddRecipeModal({
   });
 
   if (!isOpen) return null;
+
+  
 
   // file updater for simple inputs (name, cuisine, difficulty, prepTime, cookTime, servings, image url)
   const handleFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -85,25 +100,58 @@ export default function AddRecipeModal({
     });
   };
   return (
-    <div className="flex fixed inset-0 items-center justify-center backdrop-blur-sm  p-4 z-50 bg-slate-900/50">
+    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm  p-4  bg-slate-900/50">
       <form
-        className={`bg-white flex flex-col gap-2 justify-center items-center max-h-full w-full sm:max-w-md md:max-w-xl lg:max-w-2xl rounded-xl py-4`}
+        className={`relative bg-white flex flex-col gap-2 justify-center items-center  w-full max-h-[90vh] max-w-2xl rounded-xl px-4 py-4 md:px-8`}
         onSubmit={handleSubmit}
       >
-        <h2 className="font-bold text-lg mb-4">Add Recipe</h2>
+        {/* header  */}
+        <div className="relative w-full border-b border-slate-100  px-2 pb-4">
+          <div className="">
+            <h2 className="font-bold text-xl text-slate-900">
+              Add a new Recipe
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Add the details for your recipe below.
+            </p>
+          </div>
 
-        <div className="">
-          Name:{" "}
-          <input
-            name="name"
-            value={formData.name}
-            onChange={handleFieldChange}
-            className="border rounded-lg px-4 py-1"
-          />
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close modal"
+            className="absolute top-0 right-0 cursor-pointer p-2 rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700"
+          >
+            <X size={20} />
+          </button>
         </div>
-        <div className="">
-          Cuisine{" "}
-          {/* <input
+
+        {/* body  */}
+        <div className="flex flex-col gap-3 w-full min-h-0 overflow-y-auto">
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="name"
+              className="text-sm font-medium text-slate-700"
+            >
+              Recipe name
+            </label>
+            <input
+              name="name"
+              value={formData.name}
+              onChange={handleFieldChange}
+              placeholder="e.g. Creamy Garlic Pasta"
+              className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="cuisine"
+              className="text-sm font-medium text-slate-700"
+            >
+              Cuisine
+            </label>
+
+            {/* <input
             className="border rounded-lg px-4 py-1"
             value={formData.cuisine}
             onChange={(event) => {
@@ -113,95 +161,133 @@ export default function AddRecipeModal({
               });
             }}
           /> */}
-          <input
-            className="border rounded-lg px-4 py-1"
-            name="cuisine"
-            value={formData.cuisine}
-            onChange={handleFieldChange}
-          />
-        </div>
-        <div className="">
-          Difficulty{" "}
-          <input
-            className="border rounded-lg px-4 py-1"
-            value={formData.difficulty}
-            name="difficulty"
-            onChange={handleFieldChange}
-          />
-        </div>
-        <div className="">
-          Prep Time{" "}
-          <input
-            className="border rounded-lg px-4 py-1"
-            type="number"
-            name="prepTimeMinutes"
-            value={formData.prepTimeMinutes}
-            onChange={handleFieldChange}
-          />
-        </div>
-        <div className=""></div>
-        <div className="">
-          Cook Time{" "}
-          <input
-            className="border rounded-lg px-4 py-1"
-            name="cookTimeMinutes"
-            type="number"
-            value={formData.cookTimeMinutes}
-            onChange={handleFieldChange}
-          />
-        </div>
-        <div className="">
-          Servings{" "}
-          <input
-            className="border rounded-lg px-4 py-1"
-            type="number"
-            name="servings"
-            min={1}
-            value={formData.servings}
-            onChange={handleFieldChange}
-          />
-        </div>
-        <div className="">
-          Image URL{" "}
-          <input
-            className="border rounded-lg px-4 py-1"
-            type="url"
-            name="image"
-            value={formData.image}
-            onChange={handleFieldChange}
-          />
-        </div>
-        <div>
-          <label className="font-semibold">Ingredients</label>
+            <input
+              placeholder="e.g. Nigerian"
+              className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+              name="cuisine"
+              value={formData.cuisine}
+              onChange={handleFieldChange}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="difficulty"
+              className="text-sm font-medium text-slate-700"
+            >
+              Difficulty
+            </label>
+            <input
+              placeholder="e.g. Medium"
+              className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+              value={formData.difficulty}
+              name="difficulty"
+              onChange={handleFieldChange}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="prepTimeMinutes"
+              className="text-sm font-medium text-slate-700"
+            >
+              Prep Time
+            </label>
 
-          <div className="space-y-2 mt-2">
+            <input
+              placeholder="e.g. Medium"
+              className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+              type="number"
+              name="prepTimeMinutes"
+              value={formData.prepTimeMinutes}
+              onChange={handleFieldChange}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="cookTimeMinutes"
+              className="text-sm font-medium text-slate-700"
+            >
+              Cook Time
+            </label>
+
+            <input
+              name="cookTimeMinutes"
+              type="number"
+              value={formData.cookTimeMinutes}
+              onChange={handleFieldChange}
+              className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+            />
+          </div>
+          <div className="">
+            <label
+              htmlFor="difficulty"
+              className="text-sm font-medium text-slate-700"
+            >
+              Servings
+            </label>
+
+            <input
+              className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+              type="number"
+              name="servings"
+              min={1}
+              value={formData.servings}
+              onChange={handleFieldChange}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <label
+              htmlFor="difficulty"
+              className="text-sm font-medium text-slate-700"
+            >
+              Image URL
+            </label>
+
+            <input
+              className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+              type="url"
+              name="image"
+              value={formData.image}
+              onChange={handleFieldChange}
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <label htmlFor="" className="font-semibold">
+              Ingredients
+            </label>
+
+            <button
+              type="button"
+              onClick={addIngredient}
+              className="bg-black border rounded-lg px-4 py-2 flex items-center gap-1 text-sm font-medium text-white hover:bg-black/80"
+            >
+              <Plus size={16} />
+              Add
+            </button>
+          </div>
+
+          <div className="space-y-2">
             {formData.ingredients.map((ingredient, index) => (
-              <div key={index} className="flex gap-2">
+              <div key={index} className="flex gap-2 w-full">
                 <input
-                  className="border rounded-lg px-4 py-2 flex-1"
+                  className="border border-slate-200 focus:border-slate-400 focus:ring-2 focus:ring-slate-100 rounded-lg px-4 py-2 min-w-0 flex-1"
                   value={ingredient}
                   placeholder={`Ingredient ${index + 1}`}
-                  onChange={(event) => handleIngredientChange(event.target.value, index)}
+                  onChange={(event) =>
+                    handleIngredientChange(event.target.value, index)
+                  }
                 />
 
                 <button
                   type="button"
                   onClick={() => removeIngredient(index)}
-                  className="bg-gray-700 text-white border rounded-lg px-3 py-2"
+                  aria-label="remove button"
+                  className="border-gray-700 text-black border rounded-lg px-3 py-2 shrink-0 hover:border-red-200"
                 >
-                  Remove
+                  <Minus size={16} />
                 </button>
               </div>
             ))}
           </div>
-
-          <button
-            type="button"
-            onClick={addIngredient}
-            className="bg-black text-white mt-2 border rounded-lg px-4 py-2"
-          >
-            + Add ingredient
-          </button>
         </div>
 
         <div className="flex justify-between gap-4 mt-2">
@@ -212,16 +298,7 @@ export default function AddRecipeModal({
           >
             {addRecipeMutation.isPending ? "Adding..." : "Add Recipe"}
           </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex gap-2 items-center border rounded-lg px-4 py-2 bg-red-800 text-white"
-          >
-            Close <X size={18} />
-          </button>
         </div>
-
-        
       </form>
     </div>
   );

@@ -32,13 +32,12 @@ export default function RecipePage() {
   // Assuming a total of 100 recipes and 6 recipes per page
   const pageSize = 6;
 
+  // local state for what the user types
   const [searchInput, setSearchInput] = useState(q);
+  // state to remember previous search q
   const [prevQ, setPrevQ] = useState(q);
-  // const debouncedSearch = useDebounce(searchInput, 400);
 
-  // const isTypingRef = useRef(false);
-
-  // sync url to external nav (back and forward)
+  // remember q to sync url to external nav (back and forward)
   if (q !== prevQ) {
     setPrevQ(q);
     setSearchInput(q);
@@ -148,7 +147,6 @@ export default function RecipePage() {
             type="text"
             value={searchInput}
             onChange={(event) => { 
-              // isTypingRef.current = true;
               setSearchInput(event.target.value);
               }
             }
@@ -187,19 +185,7 @@ export default function RecipePage() {
                   return next;
                 })
                 
-                // const params = new URLSearchParams(searchParams);
-
-                // if (event.target.value) {
-                //   params.set("tag", event.target.value);
-                //   params.delete("q");
-                //   params.delete("mealType");
-                //   // setSearchInput("");
-                // } else {
-                //   params.delete("tag");
-                // }
-
-                // params.set("page", "1");
-                // setSearchParams(params);
+                
               }}
               className="w-full border rounded-sm pl-4 pr-10 py-2 sm:w-auto appearance-none cursor-pointer"
             >
@@ -223,18 +209,7 @@ export default function RecipePage() {
             <select
               value={mealType}
               onChange={(event) => {
-                // const params = new URLSearchParams(searchParams);
-
-                // if (event.target.value) {
-                //   params.set("mealType", event.target.value);
-                //   params.delete("q");
-                //   params.delete("tag");
-                //   // setSearchInput("");
-                // } else {
-                //   params.delete("mealType");
-                // }
-                // params.set("page", "1");
-                // setSearchParams(params);
+                
 
                 const selectedValue = event.target.value;
                 setSearchInput("");
@@ -274,21 +249,8 @@ export default function RecipePage() {
               className=" w-full border rounded-sm pl-4 pr-10 py-2  sm:w-auto appearance-none cursor-pointer"
               value={sortBy || ""}
               onChange={(event) => {
-                // const params = new URLSearchParams(searchParams);
-
-                // if (event.target.value) {
-                //   params.set("sortBy", event.target.value);
-                // } else {
-                //   params.delete("sortBy");
-                // }
-
-                // params.set("page", "1");
-
-                // setSearchParams(params);
 
                 const selectedValue = event.target.value;
-                // setSearchInput("");
-
                 setSearchParams((prev) => {
                   const next = new URLSearchParams(prev);
 
@@ -398,7 +360,7 @@ export default function RecipePage() {
               }`}
             >
               <Grid2X2 size={18} />
-              <span>Grid</span>
+              <span className="hidden sm:block">Grid</span>
             </button>
 
             <button
@@ -416,7 +378,7 @@ export default function RecipePage() {
               }`}
             >
               <List size={18} />
-              <span>Compact</span>
+              <span className="hidden sm:block">Compact</span>
             </button>
           </div>
         </div>
