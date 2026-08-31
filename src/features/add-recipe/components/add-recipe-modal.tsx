@@ -4,6 +4,7 @@ import { Minus, Plus, X } from "lucide-react";
 import type { UseMutationResult } from "@tanstack/react-query";
 import type { Recipe } from "../../recipes/types/recipe.types";
 import type { AddRecipeMutationContext } from "../mutations/use-add-recipe";
+import { toast } from "sonner";
 
 
 
@@ -38,7 +39,7 @@ export default function AddRecipeModal({
   }, [isOpen]);
 
   // const addRecipeMutation = useAddRecipe();
-  const [formData, setFormData] = useState<AddRecipeInput>({
+  const createInitialFormData = () : AddRecipeInput => ({
     name: "",
     cuisine: "",
     difficulty: "",
@@ -52,6 +53,9 @@ export default function AddRecipeModal({
     image: "",
   });
 
+  const [formData, setFormData] = useState<AddRecipeInput>(
+    createInitialFormData
+  );
   if (!isOpen) return null;
 
   
@@ -65,10 +69,18 @@ export default function AddRecipeModal({
     }));
   };
 
+  // handler for increasing or reducing the servings count
+  const handleServingsChange = (amount: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      servings: Math.max(1, prev.servings + amount),
+    }));
+  };
+
   const handleIngredientChange = (value:string , index:number) => {
     setFormData((prev) => ({
       ...prev,
-      ingredients: formData.ingredients.map((ingredient, ingredientIndex) =>
+      ingredients: prev.ingredients.map((ingredient, ingredientIndex) =>
         ingredientIndex === index ? value : ingredient),
     }));
   };
@@ -76,14 +88,14 @@ export default function AddRecipeModal({
   const addIngredient = () => {
     setFormData((prev) => ({
       ...prev,
-      ingredients: [...formData.ingredients, ""],
+      ingredients: [...prev.ingredients, ""],
     }));
   };
 
   const removeIngredient = (indexToRemove: number) => {
     setFormData((prev) => ({
       ...prev,
-      ingredients: formData.ingredients.filter(
+      ingredients: prev.ingredients.filter(
         (_, ingredientIndex) => ingredientIndex !== indexToRemove,
       ),
     }));
@@ -95,7 +107,12 @@ export default function AddRecipeModal({
 
     addRecipeMutation.mutate(formData, {
       onSuccess: () => {
+        setFormData(createInitialFormData());
+        toast.success("Recipe added successfully");
         onClose();
+      },
+      onError: () => {
+        toast.error("Failed to add recipe");
       },
     });
   };
@@ -219,20 +236,38 @@ export default function AddRecipeModal({
           </div>
           <div className="">
             <label
-              htmlFor="difficulty"
+              htmlFor="servings"
               className="text-sm font-medium text-slate-700"
             >
               Servings
             </label>
 
-            <input
-              className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
-              type="number"
-              name="servings"
-              min={1}
-              value={formData.servings}
-              onChange={handleFieldChange}
-            />
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => handleServingsChange(-1)}
+                className="flex p-2.5 items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50"
+              >
+                <Minus size={16} />
+              </button>
+
+              <input
+                className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+                type="number"
+                name="servings"
+                min={1}
+                value={formData.servings}
+                onChange={handleFieldChange}
+              />
+
+              <button
+                type="button"
+                onClick={() => handleServingsChange(1)}
+                className="flex p-2.5 items-center justify-center rounded-lg border border-slate-200 hover:bg-slate-50"
+              >
+                <Plus size={16} />
+              </button>
+            </div>
           </div>
           <div className="flex flex-col gap-1.5">
             <label

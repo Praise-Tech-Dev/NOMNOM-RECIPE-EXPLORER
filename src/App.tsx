@@ -5,6 +5,7 @@ import Home from './pages/home/home-page';
 import RecipePage from './pages/receipe-page';
 import RecipeDetailPage from './pages/recipe-detail-page';
 import MainLayout from './layout/main-layout';
+import { Toaster } from 'sonner';
 function App() {
 
   return (
@@ -18,6 +19,8 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+
+      <Toaster position="top-right" />
     </>
   );
 }
