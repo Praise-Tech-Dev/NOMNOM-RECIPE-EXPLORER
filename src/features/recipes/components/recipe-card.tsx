@@ -4,6 +4,7 @@ import type { Recipe } from "../types/recipe.types";
 import { Card } from "./Card";
 import RecipeLink from "./recipe-link";
 import { BookmarkIcon } from "lucide-react";
+import fallbackRecipeImage from "../../../assets/fallback-recipe-image.webp"
 type RecipeCardProps = {
   recipe: Recipe;
   variant: "grid" | "compact";
@@ -30,7 +31,11 @@ export default function RecipeCard({recipe, variant}: RecipeCardProps) {
             <img
               src={recipe.image}
               alt={recipe.name}
-              className="w-full object-cover"
+              className="w-full h-full object-cover"
+              onError={(event) => {
+                event.currentTarget.onerror = null;
+                event.currentTarget.src = fallbackRecipeImage;
+              }}
             />
           </div>
           <div className="min-w-0 p-4">
