@@ -82,9 +82,13 @@ export default function AddRecipeDetails({ formData, errors,  addIngredient, rem
               </div>
               {/* meal type  */}
               <div className="flex flex-col gap-2">
-                <p className="font-semibold text-slate-900">Meal Type</p>
+                <label htmlFor="mealType" className="font-semibold text-slate-900">
+                  Meal Type
+                </label>
                 <div className="relative w-full">
                   <select
+                    id="mealType"
+                    name="mealType"
                     value={formData.mealType[0] ?? ""}
                     onChange={(event) => {
                       const selectedValue = event.target.value;

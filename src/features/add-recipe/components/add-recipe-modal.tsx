@@ -1,5 +1,5 @@
 import { useEffect, type FormEvent } from "react";
-import { ArrowLeft, ArrowRight, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { validateAddRecipeForm } from "../validation/add-recipe-validation";
 import { useAddRecipe } from "../mutations/use-add-recipe";
@@ -190,7 +190,7 @@ export default function AddRecipeModal({
               handleFieldChange={handleFieldChange}
               handleFieldBlur={handleFieldBlur}
               handleServingsChange={handleServingsChange}
-              />
+            />
           ) : (
             <AddRecipeDetails
               formData={formData}
@@ -227,25 +227,32 @@ export default function AddRecipeModal({
               </button>
             </>
           ) : (
-            <>
+            <div className="flex gap-2 mt-2">
               <button
-                className="flex items-center gap-2 border rounded-lg px-4 py-2 bg-black text-white"
+                className="flex items-center gap-2 border border-slate-300 rounded-lg px-4 py-2 bg-slate-200 hover:bg-slate-300 text-black"
                 type="button"
                 onClick={handleBack}
                 // disabled={addRecipeMutation.isPending}
               >
-                Back <ArrowLeft size={16} />
+                <ArrowLeft size={16} /> Back
               </button>
-              <div className="flex justify-between gap-4 mt-2">
+              <div className="flex justify-between gap-4 ">
                 <button
                   className="border rounded-lg px-4 py-2 bg-black text-white"
                   type="submit"
                   disabled={addRecipeMutation.isPending}
                 >
-                  {addRecipeMutation.isPending ? "Adding..." : "Add Recipe"}
+                  {addRecipeMutation.isPending ? (
+                    <div className="bg-black/70  flex gap-2 items-center">
+                      <Loader2 />
+                      "Adding..." <div className="animate-spin"></div>
+                    </div>
+                  ) : (
+                    "Add Recipe"
+                  )}
                 </button>
               </div>
-            </>
+            </div>
           )}
         </div>
       </form>

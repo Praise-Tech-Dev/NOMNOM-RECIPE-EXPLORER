@@ -97,6 +97,9 @@ export default function TagsPicker(
           <div className="border-b border-slate-100 p-2">
             <input
               type="text"
+              aria-label="Search tags"
+              name="tagSearch"
+              id="tagSearch"
               value={tagSearch}
               onChange={(event) => setTagSearch(event.target.value)}
               placeholder="Search tags..."
