@@ -24,8 +24,8 @@ export default function RecipeCard({recipe, variant}: RecipeCardProps) {
           <div
             className={
               variant === "grid"
-                ? "aspect-square w-full overflow-hidden"
-                : "aspect-square w-full shrink-0 overflow-hidden sm:w-40"
+                ? "aspect-square w-full overflow-hidden bg-slate-100"
+                : "aspect-square w-full shrink-0 overflow-hidden sm:w-40 bg-slate-100"
             }
           >
             <img

@@ -100,7 +100,7 @@ export default function RecipePage() {
 
   const [isAddRecipeModalOpen, setIsAddRecipeModalOpen] = useState(false);
 
-  const addRecipeMutation = useAddRecipe(params);
+  // const addRecipeMutation = useAddRecipe(params);
 
   // console.log("TAGS:", tags);
   // console.log("IS ARRAY:", Array.isArray(tags));
@@ -121,35 +121,34 @@ export default function RecipePage() {
 
       <form
         className="my-4 flex flex-col space-y-4"
-        onSubmit={(event) => event.preventDefault()
-        //   {
-        //   event.preventDefault();
+        onSubmit={
+          (event) => event.preventDefault()
+          //   {
+          //   event.preventDefault();
 
-        //   const params = new URLSearchParams(searchParams);
+          //   const params = new URLSearchParams(searchParams);
 
-        //   if (searchInput.trim()) {
-        //     params.set("q", searchInput.trim());
-        //     params.delete("tag");
-        //     params.delete("mealType");
-        //   } else {
-        //     params.delete("q");
-        //   }
+          //   if (searchInput.trim()) {
+          //     params.set("q", searchInput.trim());
+          //     params.delete("tag");
+          //     params.delete("mealType");
+          //   } else {
+          //     params.delete("q");
+          //   }
 
-        //   params.set("page", "1");
+          //   params.set("page", "1");
 
-        //   setSearchParams(params);
-        // }
-
-      }
+          //   setSearchParams(params);
+          // }
+        }
       >
         <div className="flex flex-col gap-2 sm:flex-row">
           <input
             type="text"
             value={searchInput}
-            onChange={(event) => { 
+            onChange={(event) => {
               setSearchInput(event.target.value);
-              }
-            }
+            }}
             placeholder="Search recipes..."
             className="w-full border rounded-md px-4 py-2 sm:flex-1"
           />
@@ -177,15 +176,12 @@ export default function RecipePage() {
                     next.set("tag", selectedValue);
                     next.delete("q");
                     next.delete("mealType");
-
                   } else {
                     next.delete("tag");
                   }
                   next.set("page", "1");
                   return next;
-                })
-                
-                
+                });
               }}
               className="w-full border rounded-sm pl-4 pr-10 py-2 sm:w-auto appearance-none cursor-pointer"
             >
@@ -209,8 +205,6 @@ export default function RecipePage() {
             <select
               value={mealType}
               onChange={(event) => {
-                
-
                 const selectedValue = event.target.value;
                 setSearchInput("");
 
@@ -249,22 +243,19 @@ export default function RecipePage() {
               className=" w-full border rounded-sm pl-4 pr-10 py-2  sm:w-auto appearance-none cursor-pointer"
               value={sortBy || ""}
               onChange={(event) => {
-
                 const selectedValue = event.target.value;
                 setSearchParams((prev) => {
                   const next = new URLSearchParams(prev);
 
                   if (selectedValue) {
                     next.set("sortBy", selectedValue);
-                    
                   } else {
                     next.delete("sortBy");
                   }
                   next.set("page", "1");
                   return next;
                 });
-              }
-            }
+              }}
             >
               <option value="">Sort by ...</option>
               <option value="name">Name</option>
@@ -302,7 +293,6 @@ export default function RecipePage() {
 
                   if (selectedValue) {
                     next.set("order", selectedValue);
-                    
                   } else {
                     next.delete("order");
                   }
@@ -315,7 +305,7 @@ export default function RecipePage() {
               <option value="asc">Ascending</option>
               <option value="desc">Descending</option>
             </select>
-            
+
             <ChevronDown
               size={16}
               className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-black"
@@ -386,7 +376,8 @@ export default function RecipePage() {
       <AddRecipeModal
         isOpen={isAddRecipeModalOpen}
         onClose={() => setIsAddRecipeModalOpen(false)}
-        addRecipeMutation={addRecipeMutation}
+        // addRecipeMutation={addRecipeMutation}
+        params={params}
       />
 
       <h2 className="text-lg font-bold">All recipes</h2>
